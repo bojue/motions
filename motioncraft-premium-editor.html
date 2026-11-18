@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MotionCraft — Studio</title>
+<style>
+:root{
+  --accent:#8757f5;--accent2:#a78bfa;--ink:#191821;--muted:#8b8995;
+  --line:#eceaf1;--panel:#fff;--workspace:#f3f2f6;--soft:#f8f7fb;
+  --shadow:0 12px 38px rgba(28,22,44,.09);--r:13px;
+}
+*{box-sizing:border-box} body{margin:0;background:#f5f4f7;color:var(--ink);font:13px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{height:100vh;min-height:720px;display:grid;grid-template-rows:62px 1fr 148px;background:#fff;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:18px;padding:0 18px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.94);z-index:2}
+.brand{display:flex;align-items:center;gap:9px;font-weight:750;font-size:15px;letter-spacing:-.4px;white-space:nowrap}
+.brandmark{width:28px;height:28px;border-radius:9px;background:linear-gradient(145deg,#9b6aff,#7540e8);display:grid;place-items:center;color:#fff;box-shadow:0 4px 12px #8757f544}
+.brandmark svg{width:14px}.vline{height:22px;width:1px;background:var(--line)}
+.project{font-size:12px;color:#5f5d68}.saved{margin-left:22px;color:#9995a2;font-size:11px}.saved:before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#48c58b;margin:0 7px 1px 0}
+.topspacer{flex:1}.iconbtn{width:32px;height:32px;border:0;background:transparent;border-radius:9px;color:#777482;display:grid;place-items:center}.iconbtn:hover{background:#f4f1fa;color:var(--accent)}
+.btn{border:1px solid var(--line);border-radius:10px;padding:8px 13px;background:#fff;color:#55515f;font-size:12px;font-weight:600}
+.btn:hover{border-color:#d7c9fb;color:var(--accent)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 5px 13px #8757f52b}.btn.dark{background:#1d1b24;color:#fff;border-color:#1d1b24}
+.workspace{min-height:0;display:grid;grid-template-columns:58px 214px minmax(420px,1fr) 272px}
+.rail{border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:13px 0;gap:7px;background:#fff}
+.railitem{width:42px;height:48px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#96929e;font-size:10px;border:0;background:transparent}
+.railitem svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7}
+.railitem.active{color:var(--accent);background:#f3edff}.railitem:hover{background:#f7f4fc}
+.pages{border-right:1px solid var(--line);padding:18px 13px;overflow:auto;background:#fff}
+.sectionhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.sectionhead strong{font-size:12px}.subtle{color:#a09daa;font-size:11px}
+.page-list{display:flex;flex-direction:column;gap:8px;margin-top:15px}
+.page{height:66px;border:1px solid transparent;border-radius:12px;padding:7px;display:flex;align-items:center;gap:9px;cursor:pointer;position:relative}
+.page:hover{background:#faf9fc}.page.active{background:#f5efff;border-color:#d9c8ff}
+.thumb{width:39px;height:51px;border-radius:6px;background:linear-gradient(150deg,#fff,#eee8fa);border:1px solid #eeeaf4;display:flex;align-items:flex-end;padding:5px;color:#8e62ec;font-size:8px;font-weight:700;overflow:hidden;position:relative}
+.thumb:before{content:"";position:absolute;width:32px;height:32px;border-radius:50%;background:#c8afff88;filter:blur(9px);right:-13px;top:0}
+.thumb.blue{background:linear-gradient(150deg,#fff,#e6f1fb)}.thumb.peach{background:linear-gradient(150deg,#fff,#faeadc)}.thumb.mint{background:linear-gradient(150deg,#fff,#e5f4ec)}
+.pinfo{min-width:0}.pname{font-size:11px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pmeta{font-size:10px;color:#a09daa;margin-top:4px}.dot{width:5px;height:5px;border-radius:50%;background:var(--accent);margin-left:auto}
+.addpage{margin-top:16px;width:100%;border:1px dashed #ded9e8;background:#fff;border-radius:10px;padding:9px;color:#77717f;font-size:11px}
+.canvas-area{background:var(--workspace);display:flex;flex-direction:column;min-width:0;position:relative}
+.canvas-toolbar{height:48px;display:flex;align-items:center;padding:0 17px;gap:9px;color:#96929d;font-size:11px}
+.crumb{color:#615d6a}.crumb b{color:var(--accent);font-weight:700}
+.zoom{margin-left:auto;display:flex;align-items:center;background:#fff;border:1px solid #e9e6ef;border-radius:9px;height:29px;overflow:hidden}
+.zoom button{border:0;background:#fff;width:29px;height:27px;color:#777}.zoom span{padding:0 8px;color:#6e6a76;font-size:10px}
+.canvas-center{flex:1;min-height:0;display:grid;place-items:center;padding:24px 28px 46px;overflow:auto}
+.slide{width:min(100%,524px);aspect-ratio:9/16;max-height:calc(100% - 2px);background:linear-gradient(145deg,#fff 0%,#fbf9ff 57%,#f2eaff 100%);border-radius:2px;box-shadow:0 18px 48px rgba(34,26,49,.14);position:relative;overflow:hidden;padding:7.2% 6.3%;display:flex;flex-direction:column}
+.slide:before{content:"";position:absolute;width:55%;height:32%;right:-16%;top:17%;background:radial-gradient(circle,#c7a5ff55,transparent 70%);filter:blur(14px)}
+.slide:after{content:"";position:absolute;width:52%;height:24%;left:-22%;bottom:12%;background:radial-gradient(circle,#ffb5a055,transparent 70%);filter:blur(16px)}
+.slide>*{position:relative;z-index:1}
+.slidehead{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:750;letter-spacing:.2px}
+.slidebrand{display:flex;align-items:center;gap:8px}.slidebrand i{width:19px;height:19px;border-radius:6px;background:#17161b;display:inline-block}
+.year{font-size:11px;color:#807b88;font-weight:600}
+.kicker{margin-top:10%;align-self:flex-start;background:#f0edf4;border-radius:30px;padding:6px 12px;font-size:10px;font-weight:750;color:#292630;display:flex;align-items:center;gap:7px}
+.kicker:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.hero{font-size:clamp(29px,3.2vw,43px);line-height:1.15;letter-spacing:-2px;font-weight:850;margin:5.5% 0 3%;max-width:390px}
+.hero em{font-style:normal;color:var(--accent)}
+.desc{color:#77727e;font-size:clamp(11px,1.05vw,14px);line-height:1.8;max-width:330px}
+.cta{align-self:flex-start;margin-top:5%;background:#19181d;color:#fff;border:0;border-radius:30px;padding:13px 22px;font-weight:700;font-size:13px;box-shadow:0 7px 16px #211b2b18}
+.features{display:flex;gap:13px;flex-wrap:wrap;margin-top:7%;color:#77717d;font-size:11px;font-weight:600}.features span:before{content:"";display:inline-block;width:13px;height:13px;border:1.5px solid var(--accent);border-radius:50%;vertical-align:-3px;margin-right:6px}
+.placeholder{font-size:25px;letter-spacing:-1px;font-weight:750;margin-top:4%;color:#201e26}
+.metric{margin-top:auto;background:#ffffffc9;backdrop-filter:blur(12px);border:1px solid #ffffff;border-radius:15px;padding:15px 17px;box-shadow:0 9px 24px #30263a14}
+.metricrow{display:flex;justify-content:space-between;color:#77717d;font-size:11px;font-weight:600}.metricrow b{font-size:13px;color:#24212a}
+.progress{height:6px;border-radius:10px;background:#e9e6ed;margin-top:12px;overflow:hidden}.progress i{display:block;width:68%;height:100%;border-radius:10px;background:linear-gradient(90deg,#8c58f4,#d47a9c)}
+.playbar{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);height:38px;border:1px solid #e9e6ed;background:#ffffffed;box-shadow:0 5px 18px #26202f12;border-radius:12px;display:flex;align-items:center;gap:11px;padding:0 12px;white-space:nowrap;color:#8c8793;font-size:10px}
+.play{width:23px;height:23px;border:0;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center}.play svg{width:10px}
+.rpanel{border-left:1px solid var(--line);background:#fff;overflow:auto}
+.tabs{height:48px;display:flex;border-bottom:1px solid var(--line);padding:0 14px;gap:22px;align-items:stretch}
+.tab{border:0;background:none;color:#a09daa;font-size:12px;padding:0 3px;position:relative}.tab.active{color:#292631;font-weight:700}.tab.active:after{content:"";height:2px;background:var(--accent);position:absolute;bottom:-1px;left:0;right:0}
+.panelbody{padding:15px 14px 22px}.paneltitle{font-size:12px;font-weight:750;margin-bottom:4px}.panelmeta{font-size:10px;color:#a09daa;margin-bottom:16px}
+.group{padding:0 0 16px;margin-bottom:15px;border-bottom:1px solid #f0eef3}.gtitle{font-size:11px;font-weight:750;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}
+.fieldlabel{font-size:10px;color:#85808c;margin:9px 0 6px}.field{height:32px;border:1px solid #e8e5ed;border-radius:8px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;color:#4c4854;font-size:11px;background:#fff}.field input{border:0;outline:0;width:100%;font:inherit;color:inherit;background:transparent}
+.fieldrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.fieldrow .field{width:80px}
+.range{width:100%;accent-color:var(--accent);height:4px;margin:13px 0 0}
+.rangeends{display:flex;justify-content:space-between;color:#aaa5b0;font-size:9px}
+.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.swatch{border:1px solid #ece9f0;border-radius:8px;padding:7px 5px;display:flex;align-items:center;gap:6px;font-size:10px;color:#77717e;background:#fff}
+.swatch i{width:15px;height:15px;border:1px solid #ddd;border-radius:4px;display:block}.swatch.selected{border-color:#b89af9;background:#faf7ff;color:#7950db}
+.animgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.anim{border:1px solid #eae8ef;border-radius:10px;background:#faf9fb;padding:10px 3px 8px;text-align:center;color:#77717e;font-size:9px;min-height:66px}
+.anim .glyph{height:27px;display:grid;place-items:center;color:var(--accent);font-size:20px;font-weight:700}.anim.selected{border:1.5px solid var(--accent);background:#f7f2ff;color:#7650d7;box-shadow:0 0 0 2px #8757f510}
+.pills{display:flex;flex-wrap:wrap;gap:6px}.pill{border:1px solid #ece9f0;border-radius:20px;padding:5px 9px;background:#fff;color:#817b89;font-size:10px}.pill.selected{color:#8054e5;border-color:#d7c5ff;background:#f7f2ff}
+.timeline{border-top:1px solid var(--line);background:#fff;padding:11px 16px 13px;display:flex;flex-direction:column;gap:9px}
+.timehead{display:flex;align-items:center;gap:9px;color:#88838f;font-size:10px}.timehead strong{color:#48444f}.toggle{background:#f4f2f7;border-radius:8px;padding:4px;display:flex;gap:2px}.toggle button{border:0;background:transparent;color:#8c8793;padding:4px 8px;border-radius:6px;font-size:10px}.toggle button.active{background:#fff;color:#5d3ac0;box-shadow:0 1px 4px #29202f12}
+.track{height:79px;display:flex;gap:8px;align-items:stretch;overflow:auto;padding-bottom:2px}
+.clip{min-width:120px;max-width:140px;flex:1;border:1px solid #ece9f0;border-radius:10px;background:#fbfafc;display:flex;align-items:center;gap:8px;padding:8px;position:relative;cursor:pointer}
+.clip.active{border-color:#c8afff;background:#f8f4ff;box-shadow:inset 0 -2px var(--accent)}
+.clipthumb{width:31px;height:49px;border-radius:5px;background:linear-gradient(150deg,#fff,#eee5fb);border:1px solid #eeeaf3;flex:none}
+.cliptext{font-size:10px;font-weight:650}.cliptext small{display:block;color:#a09ba7;font-size:9px;font-weight:400;margin-top:4px}
+.duration{position:absolute;right:7px;top:6px;color:#aaa4b0;font-size:8px}
+.clipadd{min-width:86px;border:1px dashed #ded9e7;border-radius:10px;background:#fff;color:#8b8592;font-size:10px}
+.toast{position:fixed;bottom:165px;left:50%;transform:translateX(-50%) translateY(10px);opacity:0;background:#24212b;color:#fff;padding:9px 14px;border-radius:9px;font-size:11px;transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:1050px){.workspace{grid-template-columns:52px 185px minmax(360px,1fr) 245px}.pages{padding:15px 9px}.canvas-center{padding:18px 14px 45px}}
+@media(max-width:800px){.app{min-width:760px}.workspace{grid-template-columns:48px 170px minmax(330px,1fr) 225px}.topbar{padding:0 10px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brandmark"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.8v12.4L18 12 8 5.8z"/></svg></span>MotionCraft</div>
+    <div class="vline"></div><div class="project">SaaS 新品宣传片</div><div class="saved">草稿已保存</div>
+    <div class="topspacer"></div>
+    <button class="iconbtn" title="撤销" onclick="notify('已撤销上一步')">↶</button><button class="iconbtn" title="重做" onclick="notify('已重做')">↷</button>
+    <button class="btn" onclick="notify('预览模式已开启')">▷ 预览</button>
+    <button class="btn primary" onclick="notify('发布设置已准备就绪')">✦ 发布</button>
+    <button class="btn" onclick="notify('导出设置已打开')">↓ 导出视频</button>
+  </header>
+  <main class="workspace">
+    <nav class="rail">
+      <button class="railitem"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 9v11"/></svg>模板</button>
+      <button class="railitem"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="3"/><path d="M8 8h8"/></svg>素材</button>
+      <button class="railitem"><svg viewBox="0 0 24 24"><path d="M4 7h16M12 7v13M8 20h8"/></svg>文本</button>
+      <button class="railitem active"><svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>页面</button>
+      <button class="railitem"><svg viewBox="0 0 24 24"><path d="m12 3 8 4-8 4-8-4 8-4zM4 12l8 4 8-4M4 17l8 4 8-4"/></svg>图层</button>
+      <button class="railitem"><svg viewBox="0 0 24 24"><path d="M12 20V4m-6 6 6-6 6 6"/></svg>上传</button>
+      <button class="railitem"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"/></svg>项目</button>
+      <button class="railitem"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>应用</button>
+    </nav>
+    <aside class="pages">
+      <div class="sectionhead"><strong>视频页面</strong><button class="iconbtn" onclick="addPage()">＋</button></div>
+      <div class="subtle">6 个分镜 · 共 19.2 秒</div>
+      <div class="page-list" id="pageList">
+        <div class="page active" data-index="0" onclick="selectPage(0)"><div class="thumb">01</div><div class="pinfo"><div class="pname">产品介绍</div><div class="pmeta">8 个图层 · 3.2s</div></div><i class="dot"></i></div>
+        <div class="page" data-index="1" onclick="selectPage(1)"><div class="thumb blue">02</div><div class="pinfo"><div class="pname">价格促销</div><div class="pmeta">7 个图层 · 4.0s</div></div></div>
+        <div class="page" data-index="2" onclick="selectPage(2)"><div class="thumb peach">03</div><div class="pinfo"><div class="pname">客户评价</div><div class="pmeta">7 个图层 · 3.5s</div></div></div>
+        <div class="page" data-index="3" onclick="selectPage(3)"><div class="thumb mint">04</div><div class="pinfo"><div class="pname">行动号召</div><div class="pmeta">6 个图层 · 2.5s</div></div></div>
+        <div class="page" data-index="4" onclick="selectPage(4)"><div class="thumb peach">05</div><div class="pinfo"><div class="pname">客户评价</div><div class="pmeta">7 个图层 · 3.5s</div></div></div>
+        <div class="page" data-index="5" onclick="selectPage(5)"><div class="thumb mint">06</div><div class="pinfo"><div class="pname">行动号召</div><div class="pmeta">6 个图层 · 2.5s</div></div></div>
+      </div>
+      <button class="addpage" onclick="addPage()">＋ 添加页面</button>
+    </aside>
+    <section class="canvas-area">
+      <div class="canvas-toolbar"><span class="crumb"><b>01</b>　产品介绍　›　页面</span><div class="zoom"><button onclick="zoom(-10)">−</button><span id="zoomValue">100%</span><button onclick="zoom(10)">＋</button></div></div>
+      <div class="canvas-center">
+        <div class="slide" id="slide">
+          <div class="slidehead"><div class="slidebrand"><i></i> MOTIONCRAFT</div><div class="year">2026</div></div>
+          <div class="kicker">NEW RELEASE</div>
+          <div class="hero" id="heroText">让团队告别<br><em>重复性工作</em><br>让效率自动发生。</div>
+          <div class="desc" id="descText">零代码搭建自动化流程，让团队专注真正重要的事情。</div>
+          <button class="cta" onclick="notify('这是画布中的示例按钮')">免费开始 →</button>
+          <div class="features"><span>30+ 自动化模板</span><span>无需代码</span><span>一键导出</span></div>
+          <div class="placeholder">把想法，变成成果。</div>
+          <div class="metric"><div class="metricrow"><span>自动化覆盖率</span><b>68%</b></div><div class="progress"><i></i></div></div>
+        </div>
+      </div>
+      <div class="playbar"><button class="play" id="playBtn" onclick="togglePlay()">▶</button><span id="playTime">00:01.6 / 00:19.2</span><span style="color:#d8d4df">|</span><span style="color:#8757f5;background:#f3edff;padding:4px 7px;border-radius:6px">9:16</span><span>16:9</span><span>1:1</span><span>⛶</span></div>
+    </section>
+    <aside class="rpanel">
+      <div class="tabs"><button class="tab active" onclick="switchTab(this)">页面</button><button class="tab" onclick="switchTab(this)">元素</button></div>
+      <div class="panelbody">
+        <div class="paneltitle">页面设置</div><div class="panelmeta">第 01 页 · 竖屏短视频</div>
+        <div class="group">
+          <div class="gtitle">基础信息</div>
+          <div class="fieldlabel">页面名称</div><div class="field"><input value="产品介绍" aria-label="页面名称"></div>
+          <div class="fieldlabel">页面时长</div><div class="fieldrow"><input class="range" type="range" min="1" max="10" value="3.2" step=".1" oninput="document.getElementById('duration').textContent=this.value+' s'"><div class="field" style="width:78px"><span id="duration">3.2 s</span></div></div>
+          <div class="rangeends"><span>1.0s</span><span>10.0s</span></div>
+          <div class="fieldlabel">入场转场</div><div class="field">无转场 <span>⌄</span></div>
+        </div>
+        <div class="group">
+          <div class="gtitle">页面主题 <span class="subtle">恢复默认</span></div>
+          <div class="swatches">
+            <button class="swatch selected" onclick="setTheme(this,'#ffffff')"><i style="background:#fff"></i>背景</button>
+            <button class="swatch" onclick="setTheme(this,'#f5efff')"><i style="background:#f5efff"></i>渐变</button>
+            <button class="swatch" onclick="setTheme(this,'#8b5cf6')"><i style="background:#8b5cf6"></i>强调</button>
+            <button class="swatch" onclick="setTheme(this,'#ff9b7a')"><i style="background:#ff9b7a"></i>辅助</button>
+            <button class="swatch" onclick="setTheme(this,'#191821')"><i style="background:#191821"></i>文字</button>
+            <button class="swatch" onclick="setTheme(this,'#77727e')"><i style="background:#77727e"></i>次要</button>
+          </div>
+        </div>
+        <div class="group">
+          <div class="gtitle">动画预设 <span class="subtle">查看全部 ↗</span></div>
+          <div class="animgrid">
+            <button class="anim"><div class="glyph">✦</div>弹簧弹入</button>
+            <button class="anim selected"><div class="glyph">↑</div>上滑淡入</button>
+            <button class="anim"><div class="glyph">→</div>左滑入场</button>
+            <button class="anim"><div class="glyph">←</div>右滑入场</button>
+            <button class="anim"><div class="glyph">↓</div>弹跳下落</button>
+            <button class="anim"><div class="glyph">↕</div>擦除标题</button>
+            <button class="anim"><div class="glyph">▣</div>柔和缩放</button>
+            <button class="anim"><div class="glyph">⟳</div>旋转弹入</button>
+            <button class="anim"><div class="glyph">◉</div>模糊聚焦</button>
+          </div>
+        </div>
+        <div class="group">
+          <div class="gtitle">节奏与特效</div>
+          <div class="fieldrow"><span class="fieldlabel">入场延迟</span><div class="field">0.2 s</div></div>
+          <div class="fieldrow"><span class="fieldlabel">层叠间隔</span><div class="field">0.08 s</div></div>
+          <div class="pills" style="margin-top:10px"><button class="pill selected">弹性</button><button class="pill">线性</button><button class="pill">缓出</button><button class="pill selected">数字滚动</button><button class="pill">逐字打字机</button></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+  <footer class="timeline">
+    <div class="timehead"><div class="toggle"><button class="active">▤ 页面</button><button>▧ 图层</button></div><div style="height:2px;background:#e6e3eb;flex:1;border-radius:3px"><div style="width:8%;height:4px;background:#8b5cf6;border-radius:3px;margin-top:-1px"></div></div><span>6 个页面</span><strong>19.2s</strong><button class="btn" style="padding:5px 10px" onclick="addPage()">＋ 添加页面</button></div>
+    <div class="track" id="track">
+      <div class="clip active" onclick="selectPage(0)"><span class="duration">3.2s</span><div class="clipthumb"></div><div class="cliptext">产品介绍<small>淡入 · 8 图层</small></div></div>
+      <div class="clip" onclick="selectPage(1)"><span class="duration">4.0s</span><div class="clipthumb" style="background:linear-gradient(#fff,#e6f1fb)"></div><div class="cliptext">价格促销<small>淡入 · 7 图层</small></div></div>
+      <div class="clip" onclick="selectPage(2)"><span class="duration">3.5s</span><div class="clipthumb" style="background:linear-gradient(#fff,#faeadc)"></div><div class="cliptext">客户评价<small>上滑 · 7 图层</small></div></div>
+      <div class="clip" onclick="selectPage(3)"><span class="duration">2.5s</span><div class="clipthumb" style="background:linear-gradient(#fff,#e5f4ec)"></div><div class="cliptext">行动号召<small>弹入 · 6 图层</small></div></div>
+      <div class="clip" onclick="selectPage(4)"><span class="duration">3.5s</span><div class="clipthumb" style="background:linear-gradient(#fff,#faeadc)"></div><div class="cliptext">客户评价<small>上滑 · 7 图层</small></div></div>
+      <div class="clip" onclick="selectPage(5)"><span class="duration">2.5s</span><div class="clipthumb" style="background:linear-gradient(#fff,#e5f4ec)"></div><div class="cliptext">行动号召<small>弹入 · 6 图层</small></div></div>
+      <button class="clipadd" onclick="addPage()">＋<br>添加页面</button>
+    </div>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+let current=0,zoomLevel=100,playing=false,extra=0;
+const names=['产品介绍','价格促销','客户评价','行动号召','客户评价','行动号召'];
+const copy=[
+ ['让团队告别<br><em>重复性工作</em><br>让效率自动发生。','零代码搭建自动化流程，让团队专注真正重要的事情。'],
+ ['好方案<br><em>不必昂贵</em><br>现在就开始。','灵活的方案配置，让每一个团队都能轻松上手。'],
+ ['让客户的<br><em>好评被看见</em>','真实体验，来自每一次更高效的协作。'],
+ ['下一步，<br><em>让效率起飞</em>','现在开启你的自动化工作流。'],
+ ['每一次协作<br><em>都更简单</em>','把繁琐交给流程，把时间留给创造。'],
+ ['准备好了吗？<br><em>马上开始</em>','用更好的工具，创造更好的结果。']
+];
+function notify(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._toast);window._toast=setTimeout(()=>t.classList.remove('show'),1800)}
+function selectPage(i){current=i%Math.max(6,names.length);document.querySelectorAll('.page').forEach((p,n)=>p.classList.toggle('active',n===current));document.querySelectorAll('.clip').forEach((p,n)=>p.classList.toggle('active',n===current));document.getElementById('heroText').innerHTML=copy[current%copy.length][0];document.getElementById('descText').textContent=copy[current%copy.length][1];document.querySelector('.crumb').innerHTML='<b>'+String(current+1).padStart(2,'0')+'</b>　'+names[current%names.length]+'　›　页面';document.querySelector('.panelmeta').textContent='第 '+String(current+1).padStart(2,'0')+' 页 · 竖屏短视频';document.querySelector('.field input').value=names[current%names.length];}
+function addPage(){extra++;let i=names.length;names.push('新建页面');copy.push(['把创意<br><em>变成现实</em>','添加你的文案，让故事继续发生。']);let p=document.createElement('div');p.className='page';p.dataset.index=i;p.onclick=()=>selectPage(i);p.innerHTML='<div class="thumb">'+String(i+1).padStart(2,'0')+'</div><div class="pinfo"><div class="pname">新建页面</div><div class="pmeta">0 个图层 · 3.0s</div></div>';document.getElementById('pageList').appendChild(p);let c=document.createElement('div');c.className='clip';c.onclick=()=>selectPage(i);c.innerHTML='<span class="duration">3.0s</span><div class="clipthumb"></div><div class="cliptext">新建页面<small>无动画 · 0 图层</small></div>';document.getElementById('track').insertBefore(c,document.querySelector('.clipadd'));document.querySelector('.subtle').textContent=(6+extra)+' 个分镜 · 共 '+(19.2+extra*3).toFixed(1)+' 秒';selectPage(i);notify('已添加新页面')}
+function zoom(n){zoomLevel=Math.max(50,Math.min(140,zoomLevel+n));document.getElementById('zoomValue').textContent=zoomLevel+'%';document.getElementById('slide').style.transform='scale('+(zoomLevel/100)+')'}
+function togglePlay(){playing=!playing;document.getElementById('playBtn').textContent=playing?'Ⅱ':'▶';notify(playing?'开始播放预览':'已暂停预览')}
+function switchTab(el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');notify(el.textContent+'面板')}
+function setTheme(el,color){document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');if(color==='#f5efff')document.getElementById('slide').style.background='linear-gradient(145deg,#fff 0%,#fbf9ff 55%,#eee5ff 100%)';else if(color==='#ffffff')document.getElementById('slide').style.background='linear-gradient(145deg,#fff,#faf9fc)';else if(color==='#8b5cf6'){document.querySelector('.hero em').style.color=color}else notify('已更新主题色')}
+document.querySelectorAll('.anim').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('.anim').forEach(x=>x.classList.remove('selected'));a.classList.add('selected');notify('动画已切换：'+a.textContent.trim())}));
+document.querySelectorAll('.pill').forEach(p=>p.addEventListener('click',()=>p.classList.toggle('selected')));
+</script>
+</body>
+</html>

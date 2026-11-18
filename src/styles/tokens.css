@@ -1,0 +1,19 @@
+/* 全局设计 token：编辑器与向导共享的唯一变量来源 */
+:root {
+  --violet: #8757f5;
+  --violet-dark: #7540e8;
+  --violet-soft: #f3edff;
+  --violet-line: #d9c8ff;
+  --panel: #ffffff;
+  --canvas: #f3f2f6;
+  --soft: #f8f7fb;
+  --hover: #f4f1fa;
+  --hover-violet: #f7f4fe;
+  --line: #eceaf1;
+  --line-dark: #ded9e8;
+  --line-input: #dfe1e6;
+  --text: #191821;
+  --text-2: #55515f;
+  --text-3: #8b8995;
+  --danger: #d93954;
+}

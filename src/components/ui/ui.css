@@ -1,0 +1,203 @@
+/* mc- 前缀公共 UI 组件库样式：编辑器与向导共用。样式值抄自 canva-editor.css 有效值并 token 化。 */
+
+/* ===== 通用 reset：mc- 前缀作用域，保证组件在编辑器作用域外（如向导）也能正确渲染 =====
+   选择器均包在 :where() 中保持零特异性，任何 mc-* 组件规则都可无冲突覆盖。 */
+:where([class^="mc-"], [class*=" mc-"]), :where([class^="mc-"], [class*=" mc-"]) * { box-sizing: border-box; }
+:where([class^="mc-"], [class*=" mc-"]) :is(button, input, select, textarea),
+:is(button, input, select, textarea):where([class^="mc-"], [class*=" mc-"]) { font: inherit; }
+:where([class^="mc-"], [class*=" mc-"]) button,
+button:where([class^="mc-"], [class*=" mc-"]) { padding: 0; border: 0; color: inherit; background: none; cursor: pointer; }
+:where([class^="mc-"], [class*=" mc-"]) button:disabled,
+button:where([class^="mc-"], [class*=" mc-"]):disabled { opacity: .38; cursor: not-allowed; }
+:where([class^="mc-"], [class*=" mc-"]) :is(input, select, textarea),
+:is(input, select, textarea):where([class^="mc-"], [class*=" mc-"]) { color: var(--text); outline: none; }
+:where([class^="mc-"], [class*=" mc-"]) :is(input, select, textarea):focus,
+:is(input, select, textarea):where([class^="mc-"], [class*=" mc-"]):focus { border-color: var(--violet-line) !important; box-shadow: 0 0 0 3px rgba(135, 87, 245, .1); }
+/* 键盘焦点可达性：所有交互控件统一可见焦点环 */
+:where([class^="mc-"], [class*=" mc-"]) :is(button, input, select, textarea, [tabindex]):focus-visible,
+:is(button, input, select, textarea, [tabindex]):where([class^="mc-"], [class*=" mc-"]):focus-visible {
+  outline: 2px solid var(--violet);
+  outline-offset: 2px;
+}
+/* 数字输入：右对齐 + 隐藏原生上下箭头 */
+:where([class^="mc-"], [class*=" mc-"]) input[type="number"],
+input[type="number"]:where([class^="mc-"], [class*=" mc-"]) { text-align: right; -moz-appearance: textfield; appearance: textfield; }
+:where([class^="mc-"], [class*=" mc-"]) input[type="number"]::-webkit-outer-spin-button,
+:where([class^="mc-"], [class*=" mc-"]) input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]:where([class^="mc-"], [class*=" mc-"])::-webkit-outer-spin-button,
+input[type="number"]:where([class^="mc-"], [class*=" mc-"])::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+:where([class^="mc-"], [class*=" mc-"]) svg { flex: 0 0 auto; }
+
+/* ===== BrandMark 品牌方块 ===== */
+.mc-brand-mark { display: grid; place-items: center; border-radius: 9px; color: white; background: linear-gradient(145deg, #9b6aff, #7540e8); box-shadow: 0 4px 12px rgba(135, 87, 245, .27); }
+.mc-brand-mark svg { stroke-width: 2.2; }
+
+/* ===== Button 通用按钮（primary=紫色实底 / soft=紫底浅紫字 / outline=白底描边 / ghost=无底色 / danger=红字） ===== */
+.mc-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.mc-button--primary { gap: 8px; padding: 0 18px; color: #fff; background: var(--violet); box-shadow: 0 5px 13px rgba(135, 87, 245, .17); }
+.mc-button--primary:hover:not(:disabled) { background: var(--violet-dark); }
+.mc-button--soft { height: auto; padding: 7px 10px; border-radius: 8px; color: var(--violet); background: var(--violet-soft); font-size: 11px; }
+.mc-button--soft:hover:not(:disabled) { background: #eadffd; }
+.mc-button--outline { border: 1px solid var(--line); color: var(--text-2); background: var(--panel); }
+.mc-button--outline svg { color: var(--violet); }
+.mc-button--outline:hover:not(:disabled) {
+  border-color: #d7c9fb;
+  color: var(--violet);
+}
+/* 发布强调修饰：挂在 outline 变体上（顶栏「发布」按钮的紫色描边态） */
+.mc-button--publish {
+  border-color: var(--violet-line);
+  color: var(--violet-dark);
+  background: var(--violet-soft);
+}
+.mc-button--publish:hover:not(:disabled) {
+  border-color: var(--violet);
+  background: #efe7ff;
+}
+.mc-button--ghost { color: var(--text-2); background: none; }
+.mc-button--ghost:hover:not(:disabled) { background: var(--hover); color: var(--violet); }
+.mc-button--danger { border: 1px solid var(--line-input); border-radius: 8px; color: var(--danger); background: #fff; font-weight: 500; }
+.mc-button--danger:hover:not(:disabled) { background: var(--soft); }
+.mc-button--sm { height: 24px; padding: 0 10px; border-radius: 6px; font-size: 10px; }
+
+/* ===== IconButton 图标按钮（tool=顶栏 36px / small=图层面板 32px 带边框 / context=快捷条 28px / play=圆形播放） ===== */
+.mc-icon-button { display: grid; place-items: center; }
+.mc-icon-button--tool { width: 36px; height: 36px; border-radius: 9px; color: var(--text-2); }
+.mc-icon-button--tool:hover:not(:disabled) { background: var(--hover); color: var(--violet); }
+.mc-icon-button--small { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 9px; color: var(--text-2); background: var(--panel); }
+.mc-icon-button--small:hover:not(:disabled) { background: var(--hover); color: var(--violet); }
+.mc-icon-button--context { width: 28px; height: 28px; border-radius: 7px; color: var(--text-2); }
+.mc-icon-button--context:hover:not(:disabled) { background: var(--soft); color: var(--text); }
+.mc-icon-button--play { width: 30px; height: 30px; border-radius: 999px; color: white !important; background: var(--violet) !important; }
+.mc-icon-button.is-active { color: var(--violet); background: var(--violet-soft); }
+
+/* ===== ExportButton 导出按钮（bar=顶栏 / panel=项目面板通栏） ===== */
+.mc-export-button { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 18px; border-radius: 10px; color: #fff; background: var(--violet); font-size: 12px; font-weight: 600; box-shadow: 0 5px 13px rgba(135, 87, 245, .17); }
+.mc-export-button:hover:not(:disabled) { background: var(--violet-dark); }
+.mc-export-button--panel { justify-content: center; width: 100%; margin-top: 18px; padding: 0; }
+
+/* ===== Section 检查器分区卡 ===== */
+.mc-section { padding: 15px 14px 16px; border-bottom: 1px solid #f0eef3; }
+.mc-section-title { margin-bottom: 11px; color: var(--text); font-size: 13px; font-weight: 700; }
+.mc-section-title--has-action { display: flex; align-items: center; justify-content: space-between; }
+.mc-section-note { margin: 10px 0 0; color: var(--text-3); font-size: 11px; line-height: 1.5; }
+
+/* ===== PanelHeading 侧栏面板大标题 ===== */
+.mc-panel-heading { display: flex; align-items: center; justify-content: space-between; padding: 18px 2px 16px; }
+.mc-panel-heading h2 { margin: 0; font-size: 12px; font-weight: 750; }
+.mc-panel-heading p { margin: 4px 0 0; color: var(--text-3); font-size: 10px; }
+
+/* ===== PanelRowHeading 侧栏小节标题 ===== */
+.mc-panel-row-heading { display: flex; align-items: baseline; justify-content: space-between; margin: 20px 2px 12px; }
+.mc-panel-row-heading h2 { margin: 0; color: var(--text); font-size: 14px; font-weight: 600; }
+.mc-panel-row-heading button { color: var(--text-3); font-size: 12px; }
+.mc-panel-row-heading button:hover { color: var(--violet-dark); }
+.mc-panel-row-count { margin: 0; color: var(--text-3); font-size: 11px; }
+
+/* ===== EmptyState 空状态占位 ===== */
+.mc-empty { padding: 28px 0; color: var(--text-3); font-size: 12px; text-align: center; }
+
+/* ===== FieldRow 检查器字段行 ===== */
+.mc-field-row { display: flex; align-items: center; gap: 8px; min-height: 36px; margin-top: 8px; color: var(--text-2); font-size: 14px; }
+.mc-field-row > span { flex: 1; }
+.mc-field-row input:not([type="color"]), .mc-field-row select { width: 96px; min-width: 64px; height: 32px; padding: 0 10px; border: 1px solid var(--line-input); border-radius: 8px; background: #fff; font-size: 13px; }
+.mc-field-row select { width: 132px; min-width: 88px; }
+.mc-field-row em { margin-left: -28px; color: var(--text-3); font-size: 12px; font-style: normal; pointer-events: none; }
+.mc-field-row input[type="number"] { text-align: right; padding-right: 26px; }
+.mc-field-row input[type="color"] { width: 28px; height: 28px; padding: 2px; border: 1px solid var(--line); border-radius: 6px; background: white; cursor: pointer; }
+
+/* ===== NumberField 数字输入框 ===== */
+.mc-number-field { width: 96px; height: 32px; padding: 0 10px; border: 1px solid var(--line-input); border-radius: 8px; background: #fff; font-size: 13px; }
+
+/* ===== LabeledInput 高级属性单元格 ===== */
+.mc-labeled-input { display: flex; flex-direction: column; gap: 6px; min-width: 0; color: var(--text-3); font-size: 12px; }
+.mc-labeled-input input { width: 100%; min-width: 0; height: 32px; padding: 0 8px; border: 1px solid var(--line-input); border-radius: 8px; color: var(--text); background: #fff; font-size: 13px; }
+
+/* ===== ChipRow 胶囊选项行 ===== */
+.mc-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.mc-chip-row button { height: 32px; padding: 0 16px; border: 1px solid #ece9f0; border-radius: 20px; color: #817b89; background: #fff; font-size: 13px; font-weight: 500; }
+.mc-chip-row button:hover { background: var(--hover-violet); }
+.mc-chip-row button.is-active { color: #8054e5; border-color: #d7c5ff; background: var(--violet-soft); font-weight: 600; }
+
+/* ===== ColorField 颜色选择器（control=快捷条方框 / field=字段行内联 / swatch=主题色网格） ===== */
+.mc-color-control { display: grid; flex: 0 0 auto; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); cursor: pointer; }
+.mc-color-control:hover { border-color: var(--violet-line); }
+.mc-color-control input { width: 18px; height: 18px; padding: 0; border: 0; border-radius: 4px; background: transparent; cursor: pointer; }
+.mc-color-control input::-webkit-color-swatch-wrapper { padding: 0; }
+.mc-color-control input::-webkit-color-swatch { border: 1px solid rgba(0, 0, 0, .12); border-radius: 4px; }
+.mc-color-swatch { display: flex; align-items: center; gap: 6px; color: var(--text-3); font-size: 12px; }
+.mc-color-field, .mc-color-swatch input { width: 28px; height: 28px; padding: 2px; border: 1px solid var(--line); border-radius: 6px; background: white; cursor: pointer; }
+
+/* ===== RangeField 滑杆（ticks 刻度形态 / echo 回显形态） ===== */
+.mc-range { width: 100%; height: 3px; margin-top: 12px; appearance: none; border-radius: 3px; background: var(--line-dark); accent-color: var(--violet); }
+.mc-range::-webkit-slider-thumb { width: 12px; height: 12px; appearance: none; border: 2px solid var(--violet); border-radius: 50%; background: white; }
+.mc-range-labels { display: flex; justify-content: space-between; margin-top: 5px; color: var(--text-3); font-size: 11px; }
+.mc-range-echo { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.mc-range-echo input { flex: 1; accent-color: var(--violet); }
+.mc-range-echo em { color: var(--text-3); font-size: 10px; font-style: normal; }
+
+/* ===== Stepper 步进器 ===== */
+.mc-stepper-label { flex: 0 0 auto; color: var(--text-3); font-size: 10px; white-space: nowrap; }
+.mc-stepper-block { display: flex; flex: 0 0 auto; align-items: center; gap: 6px; }
+.mc-stepper { display: flex; flex: 0 0 auto; align-items: center; height: 30px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); overflow: hidden; }
+.mc-stepper button { width: 26px; height: 100%; color: var(--text-2); font-size: 13px; line-height: 1; }
+.mc-stepper button:hover { background: var(--soft); color: var(--text); }
+.mc-stepper input { width: 38px; height: 100%; border: 0 !important; box-shadow: none !important; text-align: center; background: transparent; font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+.mc-stepper em { padding: 0 8px 0 2px; color: var(--text-3); font-size: 9px; font-style: normal; }
+@media (max-width: 1440px) { .mc-stepper-label { display: none; } }
+
+/* ===== Tabs 标签切换器 ===== */
+/* rail：左侧图标栏 */
+.mc-tabs--rail { display: flex; flex-direction: column; gap: 4px; }
+.mc-tabs--rail button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; height: 48px; margin: 0 8px; border-radius: 11px; color: #96929e; font-size: 10px; }
+.mc-tabs--rail button svg { width: 18px; height: 18px; }
+.mc-tabs--rail button:hover { background: var(--hover-violet); color: var(--text-2); }
+.mc-tabs--rail button.is-active { background: var(--violet-soft); color: var(--violet); font-weight: 650; }
+/* segmented：灰底胶囊切换 */
+.mc-tabs--segmented { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; padding: 3px; margin-top: 2px; border-radius: 10px; background: var(--soft); }
+.mc-tabs--segmented button { height: 30px; border-radius: 8px; color: var(--text-2); font-size: 11px; font-weight: 600; }
+.mc-tabs--segmented button:hover { color: var(--text); }
+.mc-tabs--segmented button.is-active { color: var(--violet); background: var(--panel); box-shadow: 0 1px 4px rgba(31, 32, 40, .1); }
+/* segmented sm：时间轴「页面/图层」24px 小尺寸形态 */
+.mc-tabs--sm.mc-tabs--segmented { display: flex; gap: 2px; padding: 4px; margin-top: 0; border-radius: 9px; background: #f4f2f7; }
+.mc-tabs--sm.mc-tabs--segmented button { display: flex; align-items: center; justify-content: center; gap: 5px; height: 24px; padding: 0 10px; border-radius: 7px; color: #8c8793; font-size: 10px; font-weight: 400; }
+.mc-tabs--sm.mc-tabs--segmented button.is-active { color: #5d3ac0; background: white; font-weight: 400; box-shadow: 0 1px 4px rgba(41, 32, 47, .12); }
+/* underline：检查器下划线切换 */
+.mc-tabs--underline { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; flex: 0 0 44px; height: 44px; padding: 0 14px; border-bottom: 1px solid var(--line); }
+.mc-tabs--underline button { position: relative; color: #a09daa; font-size: 12px; }
+.mc-tabs--underline button.is-active { color: #292631; font-weight: 700; }
+.mc-tabs--underline button.is-active::after { position: absolute; right: 18px; bottom: -1px; left: 18px; height: 2px; background: var(--violet); content: ""; }
+/* pills：底部播放坞比例切换 */
+.mc-tabs--pills { display: flex; gap: 2px; }
+.mc-tabs--pills button { height: 24px; padding: 0 9px; border-radius: 6px; color: var(--text-3); font-size: 9px; }
+.mc-tabs--pills button.is-active { color: var(--violet); background: var(--violet-soft); font-weight: 650; }
+
+/* ===== Modal 通用浮层 ===== */
+.mc-modal-backdrop { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(15, 16, 21, .32); animation: mc-picker-fade .16s ease; }
+@keyframes mc-picker-fade { from { opacity: 0; } }
+
+/* ===== Toast 轻提示 ===== */
+.mc-toast { position: fixed; bottom: 30px; left: 50%; z-index: 90; padding: 10px 20px; transform: translateX(-50%); border-radius: 999px; color: #fff; background: rgba(15, 16, 21, .92); box-shadow: 0 10px 30px rgba(15, 16, 21, .3); font-size: 12px; font-weight: 550; white-space: nowrap; animation: mc-toast-pop .2s cubic-bezier(.34, 1.4, .64, 1); }
+@keyframes mc-toast-pop { from { transform: translate(-50%, 8px); opacity: 0; } }
+
+/* ===== UploadDrop 上传落点 ===== */
+.mc-upload-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 110px; margin-top: 14px; padding: 14px; border: 1.5px dashed var(--line-dark); border-radius: 12px; color: var(--text-2); background: var(--soft); }
+.mc-upload-drop:hover { border-color: var(--violet-line); color: var(--violet); background: var(--violet-soft); }
+.mc-upload-drop svg { color: var(--violet); }
+.mc-upload-drop strong { font-size: 11px; }
+.mc-upload-drop small { color: var(--text-3); font-size: 9px; }
+.mc-upload-drop--compact { height: auto; margin-top: 8px; padding: 12px; }
+
+/* ===== AspectRatioPicker cards 向导画幅三卡片（尺寸观感参照 qs-scenes/qs-scene，全局 token 上色） ===== */
+.mc-ratio-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.mc-ratio-card { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; text-align: left; transition: border-color .16s, box-shadow .16s, transform .16s; }
+.mc-ratio-card:hover { border-color: #cdb4f7; transform: translateY(-2px); }
+.mc-ratio-card.is-active { border-color: var(--violet); box-shadow: 0 12px 26px rgba(135, 87, 245, .16); }
+.mc-ratio-card strong { font-size: 13px; }
+.mc-ratio-card small { color: var(--text-3); font-size: 11px; line-height: 1.5; }
+.mc-ratio-card em { margin-top: auto; padding: 3px 8px; border-radius: 999px; color: var(--violet); background: #f4ecff; font-size: 10px; font-style: normal; font-weight: 700; }
+.mc-ratio-frame { display: block; width: 54px; height: 72px; border: 1.5px solid #d9d3e0; border-radius: 8px; background: linear-gradient(160deg, #faf8ff, #efe9f9); }
+.mc-ratio-frame--1-1 { width: 64px; height: 64px; }
+.mc-ratio-frame--16-9 { width: 100px; height: 56px; }
+/* 窄屏单列（对齐向导 quick-start 原 900px 断点现值） */
+@media (max-width: 900px) { .mc-ratio-cards { grid-template-columns: 1fr; } }
